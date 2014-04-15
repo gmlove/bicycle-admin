@@ -1,0 +1,5 @@
+{>"base.dust"/}
+{<bodyContent}
+<h1>404</h1>
+<pre>{data.path}</pre>
+{/bodyContent}

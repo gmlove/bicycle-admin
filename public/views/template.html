@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Express Admin Mongo</title>
+
+    <!-- Bootstrap -->
+    <link href="{__relative_to__}../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{__relative_to__}../vendor/kendo-ui/styles/web/kendo.common-bootstrap.css">
+    <link rel="stylesheet" href="{__relative_to__}../vendor/kendo-ui/styles/web/kendo.bootstrap.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="{__relative_to__}../vendor/dustjs-linkedin/dust-core.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{__relative_to__}../vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src="{__relative_to__}../vendor/kendo-ui/js/kendo.web.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{__relative_to__}../vendor/bootstrap/js/bootstrap.js"></script>
+    {__compiled_dust_files__}
+    <script>
+    $(document).ready(function(){
+      var utils = {
+        urlparams: function(url){
+          url = url || window.location.href;
+          var p = {};
+          var idx = url.indexOf('?');
+          if(idx == -1) return p;
+          var purl = url.substr(idx + 1);
+          var params = purl.split('&');
+          for (var i = 0;i<params.length;i++){
+            var eidx = params[i].indexOf('=');
+            if (eidx == -1) p[params[i]] = '';
+            else{
+              p[params[i].substr(0, eidx)] = params[i].substr(eidx + 1);
+            }
+          }
+          return p;
+        }
+      }
+      var base_path = '{__base_view_path__}';
+      var base_data_path = '{__base_data_path__}';
+      var path = window.location.pathname;
+      var data_path = path.match(/(^.*?).html/)[1];
+      var template_path = data_path.replace(base_path, '') + '.dust';
+      template_path = template_path[0] == '/' ? template_path.substring(1) : template_path;
+      var data_path = base_data_path + '/' + template_path;
+      data_path = data_path.substr(0, data_path.length - 5) + '.json';
+      data_path = data_path[0] != '/' ? '/' + data_path : data_path;
+      data_path = data_path.replace(/\/{2,}/g, '/');
+      var http500_path = window.location.href.match(/(^https?:\/\/[^\/]*)\/.*$/)[1] +base_path + 'http/http500.html';
+
+      $.get(data_path, utils.urlparams(), function(data) {
+        if (data.code != 0) {
+          window.location.href = http500_path;
+          return;
+        } else {
+            data = data.data;
+        }
+        dust.render(template_path, data, function(err, out) {
+          if (err) {
+            console.log('render template failed: err=' + err.message + ', template=' + template_path + ', data=');
+            console.log(data);
+            console.log(err.stack);
+            throw err;
+          }
+          $('body').html(out);
+        });
+      })
+      .fail(function(err) {
+        console.log('get data failed from path: ' + data_path);
+        console.log(err);
+      });
+    });
+    </script>
+
+  </head>
+  <body>
+  </body>
+</html>

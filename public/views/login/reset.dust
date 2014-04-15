@@ -1,0 +1,14 @@
+{>"base.dust"/}
+{<bodyContent}
+<link rel="stylesheet" type="text/css" href="login.css"/>
+    <div class="container" style="width:350px;">
+
+      <form class="form-reset" action="/webapi/login/reset/{email}/{token}/" role="form">
+        <h2 class="form-reset-heading">Reset your password</h2>
+        <input type="password" name="password" class="form-control" placeholder="Password" required autofocus>
+        <input type="password" name="confirm" class="form-control" placeholder="Password Repeat" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Reset</button>
+      </form>
+
+    </div>
+{/bodyContent}

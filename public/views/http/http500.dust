@@ -1,0 +1,5 @@
+{>"base.dust"/}
+{<bodyContent}
+<h1>500{message}</h1>
+<pre>{stack}</pre>
+{/bodyContent}
