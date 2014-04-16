@@ -3,7 +3,7 @@
 exports = module.exports = function(app, mongoose) {
   var adminSchema = new mongoose.Schema({
     user: {
-      id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      id: { type: mongoose.Schema.Types.ObjectId, ref: 'bicycle_admin_User' },
       name: { type: String, default: '' }
     },
     name: {
@@ -12,7 +12,7 @@ exports = module.exports = function(app, mongoose) {
       middle: { type: String, default: '' },
       last: { type: String, default: '' },
     },
-    groups: [{ type: String, ref: 'AdminGroup' }],
+    groups: [{ type: String, ref: 'bicycle_admin_AdminGroup' }],
     permissions: [{
       name: String,
       permit: Boolean

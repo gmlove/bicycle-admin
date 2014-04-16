@@ -107,7 +107,12 @@ exports.login = function(req, res, workflowFunc){
           if (err) {
             return workflow.emit('exception', err);
           }
-
+          workflow.outcome.user = {
+            id: user.id,
+            nickname: user.nickname,
+            username: user.username,
+            avatar: user.avatar
+          };
           workflow.emit('response');
         });
       }

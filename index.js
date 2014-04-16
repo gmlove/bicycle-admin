@@ -1,7 +1,6 @@
 'use strict';
 
 var passport = require('passport'),
-    mongoose = require('mongoose'),
     webapi = require('./webapi');
 
 

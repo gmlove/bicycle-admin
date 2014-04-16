@@ -8,8 +8,8 @@ exports = module.exports = function(app, mongoose) {
     password: String,
     email: { type: String, unique: true },
     roles: {
-      admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
-      account: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }
+      admin: { type: mongoose.Schema.Types.ObjectId, ref: 'bicycle_admin_Admin' },
+      account: { type: mongoose.Schema.Types.ObjectId, ref: 'bicycle_admin_Account' }
     },
     isActive: String,
     timeCreated: { type: Date, default: Date.now },
@@ -23,9 +23,9 @@ exports = module.exports = function(app, mongoose) {
     weibo: {},
     douban: {},
     follow_count: { type: Number, default: 0 },
-    follows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    follows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'bicycle_admin_User' }],
     follower_count: { type: Number, default: 0 },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'bicycle_admin_User' }],
     score: { type: Number, default: 0 },
     search: [String]
   });

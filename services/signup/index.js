@@ -172,7 +172,7 @@ exports.signup = function(req, res, workflowFunc){
           if (err) {
             return workflow.emit('exception', err);
           }
-
+          workflow.outcome.user = {id: user.id};
           workflow.outcome.defaultReturnUrl = user.defaultReturnUrl();
           workflow.emit('response');
         });
