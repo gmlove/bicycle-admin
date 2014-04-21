@@ -22,9 +22,27 @@ var getReturnUrl = function(req) {
   return returnUrl;
 };
 
+function loginUserKey(req, res, workflowFunc) {
+  var workflow = workflowFunc(req, res);
+  logger.debug('loginUserKey');
+}
+
 exports.login = function(req, res, workflowFunc){
   var workflow = workflowFunc(req, res);
   logger.debug('login: ', util.inspect(req.body));
+
+  workflow.on('validateSign', function() {
+    var username = req.body.username;
+    var pubkey = req.body.pubkey;
+    var sign = req.body.sign;
+    if(!pubkey || !sign || !check_sign(username, pubkey, sign)) {
+      workflow.outcome.errors.push('sign verification failed');
+      workflow.on('response');
+      return;
+    }
+    workflow.emit('abuseFilter');
+  });
+
 
   workflow.on('validate', function() {
     logger.debug('login validate');
@@ -33,7 +51,8 @@ exports.login = function(req, res, workflowFunc){
     }
 
     if (!req.body.password) {
-      workflow.outcome.errfor.password = 'required';
+      workflow.emit('validateSign');
+      return;
     }
 
     if (workflow.hasErrors()) {
@@ -86,8 +105,9 @@ exports.login = function(req, res, workflowFunc){
 
   workflow.on('attemptLogin', function() {
     logger.debug('login attempt login');
-    req._passport.instance.authenticate('local', function(err, user, info) {
+    var authCallback = function(err, user, info) {
       if (err) {
+        logger.error('login error: ', err);
         return workflow.emit('exception', err);
       }
 
@@ -103,6 +123,20 @@ exports.login = function(req, res, workflowFunc){
         });
       }
       else {
+        if(req.body.pubkey) {
+          var foundKey = false;
+          for (var i = user.pubkey.length - 1; i >= 0; i--) {
+            if(user.pubkey[i] ==req.body.pubkey) {
+              foundKey = true;
+              break;
+            }
+          };
+          if (!foundKey) {
+            workflow.outcome.errors.push('unknown pubkey');
+            workflow.emit('response');
+            return;
+          }
+        }
         req.login(user, function(err) {
           if (err) {
             return workflow.emit('exception', err);
@@ -116,7 +150,14 @@ exports.login = function(req, res, workflowFunc){
           workflow.emit('response');
         });
       }
-    })(req, res);
+    }
+    if(req.body.pubkey && !req.body.password) {
+      models.User.findOne({username: req.body.username}, function(err, user) {
+        authCallback(err, user);
+      });
+    } else {
+      req._passport.instance.authenticate('local', authCallback)(req, res);
+    }
   });
 
   workflow.emit('validate');
@@ -257,7 +298,7 @@ exports.loginGoogle = function(req, res, next){
 
 exports.loginQQ = function(req, res, workflowFunc, next){
   var workflow = workflowFunc(req, res);
-  req._passport.instance.authenticate('qq', { callbackURL: '/login/qq/callback/' }, function(err, user, info) {
+  var authFunc = req._passport.instance.authenticate('qq', function(err, user, info) {
     if (!info || !info.profile) {
       workflow.outcome.errors.push('Failed to login.');
       workflow.emit('response');
@@ -285,7 +326,8 @@ exports.loginQQ = function(req, res, workflowFunc, next){
       });
 
     });
-  })(req, res, next);
+  });
+  authFunc(req, res, next);
 };
 
 exports.loginWeibo = function(req, res, workflowFunc, next){
@@ -320,6 +362,184 @@ exports.loginWeibo = function(req, res, workflowFunc, next){
     });
   })(req, res, next);
 };
+
+function check_sign(strToSign, pubkey, sign) {
+  return true;
+}
+
+exports.apiLogin = function(provider, req, res, workflowFunc, next){
+  logger.debug('apiLogin: provider=%s, req.body=', provider, req.body);
+  var workflow = workflowFunc(req, res);
+  workflow.on('validate', function() {
+    var accessToken = req.body.access_token;
+    var pubkey = req.body.pubkey;
+    var sign = req.body.sign;
+    if (!check_sign(accessToken, pubkey, sign)) {
+      workflow.outcome.errors.push('sign verification failed.');
+      workflow.emit('response');
+      return;
+    }
+    if (!accessToken) {
+      workflow.outcome.errors.push('no accessToken found');
+      workflow.emit('response');
+      return;
+    }
+    req._passport.instance._strategy(provider).userProfile(accessToken, function(err, profile) {
+      if(err || !profile){
+        logger.error('apiLogin error: ', err);
+        workflow.outcome.errors.push('invalid accessToken');
+        workflow.emit('response');
+        return;
+      }
+      workflow.emit('register', profile);
+    })
+  });
+
+  workflow.on('register', function(profile){
+    logger.debug('register');
+    var filter = {};
+    filter[provider + '.id'] = profile.id
+    models.User.findOne(filter, function(err, user) {
+      if(err) {
+        logger.error('apiLogin error: ', err);
+        workflow.emit('exception', err);
+        return;
+      }
+      if (!user) {
+        workflow.emit('createUser', profile);
+      } else {
+        var fieldsToUpdate = {$pushAll: {pubkey:[req.body.pubkey]}};
+        models.User.update({_id:user._id}, fieldsToUpdate, function(err) {
+          if (err) {
+            logger.error('apiLogin error: ', err);
+            workflow.emit('exception', err);
+            return;
+          }
+          workflow.user = user;
+          workflow.emit('logUserIn', profile);
+        });
+      }
+    })
+  });
+
+  workflow.on('createUser', function(profile) {
+    logger.debug('createUser');
+    var fieldsToSet = {
+      isActive: 'yes',
+      username: profile.id,
+      nickname: profile.nickname || profile.screen_name  || profile.name,
+      avatar: profile._json.figureurl_2 || profile.avatar_hd,
+      search: [
+        profile.nickname || profile.screen_name || profile.name
+      ],
+      pubkey: [
+        req.body.pubkey
+      ]
+    };
+    fieldsToSet[provider] = profile;
+    logger.debug('fieldsToSet: ', fieldsToSet);
+
+    models.User.create(fieldsToSet, function(err, user) {
+      if (err) {
+        logger.error('apiLogin error: ', err);
+        return workflow.emit('exception', err);
+      }
+
+      workflow.user = user;
+      workflow.emit('createAccount', profile);
+    });
+  });
+
+  workflow.on('createAccount', function(profile) {
+    logger.debug('createAccount:', profile);
+    var displayName = profile.nickname || '';
+    var nameParts = displayName.split(' ');
+    var fieldsToSet = {
+      isVerified: 'yes',
+      'name.first': nameParts[0],
+      'name.last': nameParts[1] || '',
+      'name.full': displayName,
+      user: {
+        id: workflow.user._id,
+        name: workflow.user.username
+      },
+      search: [
+        nameParts[0],
+        nameParts[1] || ''
+      ]
+    };
+    models.Account.create(fieldsToSet, function(err, account) {
+      if (err) {
+        logger.error('apiLogin error: ', err);
+        return workflow.emit('exception', err);
+      }
+
+      //update user with account
+      workflow.user.roles.account = account._id;
+      workflow.user.save(function(err, user) {
+        if (err) {
+          logger.error('apiLogin error: ', err);
+          return workflow.emit('exception', err);
+        }
+
+        workflow.emit('sendWelcomeEmail');
+      });
+    });
+  });
+
+  workflow.on('sendWelcomeEmail', function() {
+    logger.debug('sendWelcomeEmail');
+    var email = workflow.user.email;
+    if(!email) {
+      logger.info('user has no email, will not send welcome email: username=', workflow.user.username);
+      workflow.emit('logUserIn');
+      return;
+    }
+    req.app.utility.sendmail(req, res, {
+      from: req.app.get('smtp-from-name') +' <'+ req.app.get('smtp-from-address') +'>',
+      to: email,
+      subject: 'Your '+ req.app.get('project-name') +' Account',
+      textPath: 'signup/email-text',
+      htmlPath: 'signup/email-html',
+      locals: {
+        username: workflow.user.username,
+        email: email,
+        loginURL: 'http://'+ req.headers.host +'/login/',
+        projectName: req.app.get('project-name')
+      },
+      success: function(message) {
+        workflow.emit('logUserIn');
+      },
+      error: function(err) {
+        logger.error('Error Sending Welcome Email: ', err);
+        workflow.emit('logUserIn');
+      }
+    });
+  });
+
+  workflow.on('logUserIn', function() {
+    logger.debug('logUserIn: ');
+    req.login(workflow.user, function(err) {
+      if (err) {
+        logger.error('login user error: ', err);
+        return workflow.emit('exception', err);
+      }
+      workflow.outcome.user = workflow.user;
+      workflow.emit('response');
+    });
+  });
+
+  workflow.emit('validate');
+};
+
+exports.apiLoginWeibo = function(req, res, workflowFunc, next){
+  exports.apiLogin('sina', req, res, workflowFunc, next);
+};
+
+exports.apiLoginQQ = function(req, res, workflowFunc, next) {
+  exports.apiLogin('qq', req, res, workflowFunc, next);
+}
+
 
 exports.forgot = function(req, res, workflowFunc, next){
   var workflow = workflowFunc(req, res);

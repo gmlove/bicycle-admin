@@ -11,7 +11,9 @@ exports = module.exports = function(app, passport) {
   TwitterStrategy = require('passport-twitter').Strategy,
   GitHubStrategy = require('passport-github').Strategy,
   FacebookStrategy = require('passport-facebook').Strategy,
-  GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+  GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+  qqStrategy = require('passport-qq').Strategy,
+  weiboStrategy = require('passport-sina').Strategy;
 
   passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -124,7 +126,7 @@ exports = module.exports = function(app, passport) {
   }
 
   if (config.oauth.weibo && config.oauth.weibo.key) {
-    passport.use(new passport_sina({
+    passport.use(new weiboStrategy({
         clientID: config.oauth.weibo.key,
         clientSecret: config.oauth.weibo.secret
       },
