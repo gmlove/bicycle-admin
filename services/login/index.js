@@ -408,7 +408,7 @@ exports.apiLogin = function(provider, req, res, workflowFunc, next){
       if (!user) {
         workflow.emit('createUser', profile);
       } else {
-        var fieldsToUpdate = {$pushAll: {pubkey:[req.body.pubkey]}};
+        var fieldsToUpdate = {$addToSet: {pubkey: req.body.pubkey}};
         models.User.update({_id:user._id}, fieldsToUpdate, function(err) {
           if (err) {
             logger.error('apiLogin error: ', err);
