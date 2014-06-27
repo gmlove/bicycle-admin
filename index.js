@@ -15,8 +15,11 @@ exports.setupMiddleware = function(app) {
 
 
 exports.setupRoutes = function(app, passport) {
-    app.use('/webapi/', webapi.routes());
+    app.use('/webapi/', webapi.routes(app));
 }
 
+exports.init = function(app) {
+    require('bicycle').bicycle = app.bicycle;
+}
 
 exports.errorHandler = require('./webapi/http/index').http500Handler;

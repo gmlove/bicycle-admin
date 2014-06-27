@@ -7,7 +7,6 @@ var config = require('./config'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
-    mongoose = require('mongoose'),
     helmet = require('helmet'),
     bicycle = require('bicycle'),
     db = require('bicycle/db'),
@@ -25,6 +24,8 @@ app.server = http.createServer(app);
 //init bicycle
 bicycle.init(app);
 app.bicycle = bicycle;
+
+require('./index').init(app);
 
 var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
 
@@ -67,8 +68,9 @@ app.configure(function(){
     //middleware
     app.use(express.logger('dev'));
     app.use(express.compress());
-    app.use(express.favicon(__dirname + '/public/favicon.ico'));
-    app.use(express.static(path.join(__dirname, "public")));
+    app.use(express.favicon(__dirname + '/public/favicon.png'));
+    app.use('/public1', express.static(path.join(__dirname, "public1")));
+    app.use('/public', express.static(path.join(__dirname, "public")));
     app.use(express.urlencoded());
     app.use(express.json());
     app.use(express.methodOverride());
@@ -77,12 +79,11 @@ app.configure(function(){
       secret: config.cryptoKey,
       store: app.sessionStore
     }));
-    app.use(passport.initialize());
-    app.use(passport.session());
+    require('./index').setupMiddleware(app);
     helmet.defaults(app);
 
     //route requests
-    app.use('/webapi/', webapi.routes());
+    require('./index').setupRoutes(app);
 
     //error handler
     app.use(require('./webapi/http/index').http500Handler);
@@ -103,6 +104,10 @@ app.use(express.errorHandler());
 app.server.listen(config['port'], function(){
     //and... we're live
     logger.info('Server started at port: %s', config['port']);
+});
+
+process.on('uncaughtException', function(err) {
+  logger.error('Caught exception: ', err);
 });
 
 module.exports = app;

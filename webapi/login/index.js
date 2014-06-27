@@ -2,7 +2,7 @@
 
 var resp = require('../response');
 var loginService = require('../../services/login');
-var workflowFunc = require('../workflow')();
+var workflowFunc = require('bicycle/core/workflow');
 
 var loginData = function (req, res) {
     resp.sendResult(0, {loginData: 'this is some fake login data.'}, res);

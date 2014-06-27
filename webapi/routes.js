@@ -3,7 +3,7 @@
 var express = require('express');
 var passport = require('passport');
 
-exports = module.exports = function() {
+exports = module.exports = function(adminApp) {
     var app = express();
     app.use(app.router);
     route(app, passport);
@@ -42,6 +42,8 @@ function route(app) {
     require('./http').route(app);
     require('./login').route(app);
     require('./signup').route(app);
+    require('./admin').route(app);
+    require('./pagesupport').route(app);
 /*
     //front end
     app.get('/', require('./views/index').init);

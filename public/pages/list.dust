@@ -1,0 +1,19 @@
+{>"base.dust"/}
+{<contentBody}
+<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.common-bootstrap.min.css" rel="stylesheet" />
+<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.bootstrap.min.css" rel="stylesheet" />
+<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.dataviz.min.css" rel="stylesheet" />
+<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.dataviz.bootstrap.min.css" rel="stylesheet" />
+<div class="row" style="margin-left:0px">
+    <div id="grid"></div>
+</div>
+
+{+startScript}
+<script>
+requirejs(['list'], function(){
+    console.log('page inited!');
+});
+</script>
+{/startScript}
+
+{/contentBody}

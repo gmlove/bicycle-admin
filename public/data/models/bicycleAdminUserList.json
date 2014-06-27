@@ -1,0 +1,126 @@
+{
+    "grid": {
+        "gridConf": {
+            "dataSource": {
+                "transport": {
+                    "read":  {
+                        "url": "../data/models/users.json"
+                    },
+                    "update": {
+                        "url": "http://demos.telerik.com/kendo-ui/service/Products/Update",
+                        "dataType": "jsonp"
+                    },
+                    "destroy": {
+                        "url": "http://demos.telerik.com/kendo-ui/service/Products/Destroy",
+                        "dataType": "jsonp"
+                    },
+                    "create": {
+                        "url": "http://demos.telerik.com/kendo-ui/service/Products/Create",
+                        "dataType": "jsonp"
+                    }
+                },
+                "batch": true,
+                "pageSize": 20,
+                "schema": {
+                    "model": {
+                        "id": "_id",
+                        "fields": {
+                            "_id": {},
+                            "username": {},
+                            "nickname": {},
+                            "avatar": {},
+                            "email": {},
+                            "isActive": {"type": "boolean"},
+                            "timeCreated": {"type": "date", "nullable": true}
+                        }
+                    }
+                }
+            },
+            "pageable": true,
+            "height": 500,
+            "toolbar": ["create", "save", "cancel"],
+            "navigatable": true,
+            "editable": "incell",
+            "reorderable": true,
+            "resizable": true,
+            "scrollable": true,
+            "selectable": "row",
+            "filterable": {
+                "extra": true
+            },
+            "columnMenu": {
+                "sortable": true
+            },
+            "columns": [
+                {"title": "User Name", "field": "username", "width": "100px"},
+                {"title": "Nick Name", "field": "nickname", "width": "100px"},
+                {"title": "Avatar", "field": "avatar", "width": "100px"},
+                {"title": "Email", "field": "email", "width": "100px"},
+                {"title": "Active", "field": "isActive", "width": "100px"},
+                {"title": "Time Created", "field": "timeCreated", "width": "100px"},
+                {"command": ["edit", "destroy"], "title": "&nbsp;", "width": "172px" }
+            ]
+        },
+        "tabs":[
+            {
+                "title": "Orders",
+                "className": "orders",
+                "type": "grid",
+                "gridConf": {
+                    "dataSource": {
+                        "transport": {
+                            "read":  {
+                                "url": "../data/models/users.json"
+                            },
+                            "update": {
+                                "url": "http://demos.telerik.com/kendo-ui/service/Products/Update",
+                                "dataType": "jsonp"
+                            },
+                            "destroy": {
+                                "url": "http://demos.telerik.com/kendo-ui/service/Products/Destroy",
+                                "dataType": "jsonp"
+                            },
+                            "create": {
+                                "url": "http://demos.telerik.com/kendo-ui/service/Products/Create",
+                                "dataType": "jsonp"
+                            }
+                        },
+                        "batch": true,
+                        "pageSize": 20,
+                        "schema": {
+                            "model": {
+                                "id": "_id",
+                                "fields": {
+                                    "_id": {},
+                                    "username": {},
+                                    "nickname": {},
+                                    "avatar": {},
+                                    "email": {},
+                                    "isActive": {"type": "boolean"},
+                                    "timeCreated": {"type": "date", "nullable": true}
+                                }
+                            }
+                        }
+                    },
+                    "pageable": true,
+                    "height": 500,
+                    "toolbar": ["create", "save", "cancel"],
+                    "navigatable": true,
+                    "editable": true,
+                    "columns": [
+                        {"title": "User Name", "field": "username", "width": "100px"},
+                        {"title": "Nick Name", "field": "nickname", "width": "100px"},
+                        {"title": "Avatar", "field": "avatar", "width": "100px"},
+                        {"title": "Email", "field": "email", "width": "100px"},
+                        {"title": "Active", "field": "isActive", "width": "100px"},
+                        {"title": "Time Created", "field": "timeCreated", "width": "100px"},
+                        {"command": ["destroy"], "title": "&nbsp;", "width": "172px" }
+                    ]
+                }
+            },
+            {
+                "title": "Contact Information"
+            }
+        ]
+    }
+}

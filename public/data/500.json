@@ -1,0 +1,61 @@
+{
+    "user": {
+        "name": "root",
+        "role": "Administrator",
+        "registerTime": "2014.4.1",
+        "lastLoginTime": "2014.4.5 12:03:34"
+    },
+    "path": {
+        "relativeTo": ""
+    },
+    "menu": [
+        {
+            "active": false,
+            "faClassName": "fa-dashboard",
+            "name": "Dashboard",
+            "link": "index.html"
+        },
+        {
+            "faClassName": "fa-group",
+            "name": "Auth",
+            "active": true,
+            "children": [
+                {
+                    "active": true,
+                    "name": "Users",
+                    "link": "#"
+                },
+                {
+                    "name": "Groups",
+                    "link": "#"
+                }
+            ]
+        }
+    ],
+    "page": {
+        "title": "Blank page",
+        "description": "page description",
+        "breadcrumb": [
+            {
+                "link": "#",
+                "faClassName": "fa-dashboard",
+                "name": "Home"
+            },
+            {
+                "link": "#",
+                "name": "Auth"
+            },
+            {
+                "active": true,
+                "name": "Users"
+            }
+        ],
+        "messages": [
+        ]
+    },
+    "error": {
+        "name": "Error",
+        "message": "undefined",
+        "stack": "at file1\nat file2\nat file3"
+    }
+}

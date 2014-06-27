@@ -1,0 +1,78 @@
+{
+    "user": {
+        "name": "root",
+        "role": "Administrator",
+        "registerTime": "2014.4.1",
+        "lastLoginTime": "2014.4.5 12:03:34"
+    },
+    "path": {
+        "relativeTo": ""
+    },
+    "menu": [
+        {
+            "active": true,
+            "faClassName": "fa-dashboard",
+            "name": "Dashboard",
+            "link": "index.html"
+        },
+        {
+            "faClassName": "fa-group",
+            "name": "Users & Auth",
+            "active": false,
+            "children": [
+                {
+                    "active": false,
+                    "name": "Users",
+                    "link": "#"
+                },
+                {
+                    "name": "Groups",
+                    "link": "#"
+                }
+            ]
+        }
+    ],
+    "page": {
+        "title": "Blank page",
+        "description": "page description",
+        "breadcrumb": [
+            {
+                "faClassName": "fa-dashboard",
+                "active": true,
+                "name": "Home"
+            }
+        ],
+        "content": {
+            "statBoxes": [
+                {
+                    "title": 44,
+                    "description": "User Registrations",
+                    "link": "#",
+                    "colorClassName": "bg-green",
+                    "ionClassName": "ion-bag"
+                },
+                {
+                    "title": 150,
+                    "description": "New Orders",
+                    "link": "#",
+                    "colorClassName": "bg-yellow",
+                    "ionClassName": "ion-person-add"
+                },
+                {
+                    "title": 44,
+                    "description": "User Registrations",
+                    "link": "#",
+                    "colorClassName": "bg-aqua",
+                    "ionClassName": "ion-bag"
+                },
+                {
+                    "title": 150,
+                    "description": "New Orders",
+                    "link": "#",
+                    "colorClassName": "bg-green",
+                    "ionClassName": "ion-stats-bars"
+                }
+            ]
+        }
+    }
+}

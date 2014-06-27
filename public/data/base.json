@@ -1,0 +1,77 @@
+{
+    "user": {
+        "name": "root",
+        "role": "Administrator",
+        "registerTime": "2014.4.1",
+        "lastLoginTime": "2014.4.5 12:03:34"
+    },
+    "path": {
+        "relativeTo": ""
+    },
+    "menu": [
+        {
+            "active": false,
+            "faClassName": "fa-dashboard",
+            "name": "Dashboard",
+            "link": "index.html"
+        },
+        {
+            "faClassName": "fa-group",
+            "name": "Auth",
+            "active": true,
+            "children": [
+                {
+                    "active": true,
+                    "name": "Users",
+                    "link": "#"
+                },
+                {
+                    "name": "Groups",
+                    "link": "#"
+                }
+            ]
+        }
+    ],
+    "page": {
+        "title": "Blank page",
+        "description": "page description",
+        "breadcrumb": [
+            {
+                "link": "#",
+                "faClassName": "fa-dashboard",
+                "name": "Home"
+            },
+            {
+                "link": "#",
+                "name": "Auth"
+            },
+            {
+                "active": true,
+                "name": "Users"
+            }
+        ],
+        "messages": [
+            {
+                "level": "danger",
+                "title": "Alert!",
+                "message": "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart."
+            },
+            {
+                "level": "warning",
+                "title": "Alert!",
+                "message": "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart."
+            },
+            {
+                "level": "info",
+                "title": "Alert!",
+                "message": "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart."
+            },
+            {
+                "level": "success",
+                "title": "Alert!",
+                "message": "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart."
+            }
+
+        ]
+    }
+}

@@ -30,3 +30,8 @@ public/vendor/
 *.js.map
 *.dust.js
 *.bak
+.DS_Store
+public1/
+.rebooted
+public/pages/**/*.html
+public/pages/**/*.js

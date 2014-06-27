@@ -81,7 +81,7 @@ module.exports = function(grunt) {
         }
       },
       dev: {
-        script: 'app1.js',
+        script: 'app.js',
         options: {
           nodeArgs: ['--debug=31001'],
           env: {
@@ -91,7 +91,7 @@ module.exports = function(grunt) {
             'node_modules/**',
             'public/**'
           ],
-          watch: ['xx'],
+          watch: ['views/**/*.js', 'services/**/*.js', '*.js', 'models/**/*.js'],
           ext: 'js',
           callback: function (nodemon) {
             nodemon.on('log', function (event) {
@@ -136,7 +136,7 @@ module.exports = function(grunt) {
          tasks: ['newer:uglify', 'newer:jshint:client']
       },
       serverJS: {
-         files: ['views/**/*.js'],
+         files: ['views/**/*.js', 'services/**/*.js', '*.js', 'models/**/*.js'],
          tasks: ['newer:jshint:server']
       },
       testsJS: {
