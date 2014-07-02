@@ -1,7 +1,6 @@
 var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
 var async = require('async');
 var dateFormat = require('dateformat');
-var url = require('url');
 var modelAdmins = require('../../admins').modelAdmins;
 var apiAdmin = require('../admin');
 var config = require('../../config');
@@ -12,7 +11,6 @@ var BasePageSupport = function (workflow) {
     this.workflow = workflow;
     this.req = workflow.req;
     this.res = workflow.res;
-    this.pageBaseUrl = this.req.protocol + '://' + this.req.get('host') + '/public/pages/';
 }
 
 module.exports = BasePageSupport;
@@ -21,12 +19,11 @@ var proto = BasePageSupport.prototype;
 proto.forpage = '';
 
 proto.resolve = function(page) {
-    return url.resolve(this.pageBaseUrl, page);
+    return this.req.urlResolver.resolvePage(page);
 }
 
 proto.resolveModelUrl = function(appName, modelName) {
-    var routedName = apiAdmin.getRoutedModelName(appName, modelName);
-    return this.resolve('list.html') + '?model=' + routedName;
+    return this.req.urlResolver.resolveModelListUrl(appName, modelName);
 }
 
 
@@ -88,7 +85,7 @@ proto.buildMenu = function(cb) {
                     "link": this.resolveModelUrl(config.appName, 'AdminGroup'),
                 },
                 {
-                    "id": apiAdmin.getRoutedModelName(config.appName, 'loginAttempt'),
+                    "id": apiAdmin.getRoutedModelName(config.appName, 'LoginAttempt'),
                     "name": "Login Attempts",
                     "link": this.resolveModelUrl(config.appName, 'LoginAttempt'),
                 }

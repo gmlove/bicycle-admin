@@ -1,5 +1,5 @@
 var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
-
+var bicycle = require('bicycle').bicycle;
 
 var exp = module.exports;
 
@@ -26,3 +26,8 @@ exp.unregisterAdmin = function (appName, modelName) {
 exp.isModelRegistered = function (appName, modelName) {
     return modelAdmins[appName] && modelAdmins[appName][modelName];
 }
+
+
+var config = require('./config');
+var UserAdmin = require('./services/modeladmins/UserAdmin');
+exp.registerAdmin(new UserAdmin(config.appName, 'User', bicycle.models[config.appName].User));

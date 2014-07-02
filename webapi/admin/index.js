@@ -1,5 +1,4 @@
 var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
-var BaseAdmin = require('../../services/modeladmins/BaseAdmin');
 var admins = require('../../admins');
 var express = require('express');
 var util = require('util');
@@ -31,6 +30,7 @@ exports.getRoutedModelName = function(appName, modelName) {
 }
 
 exports.adminRoute = function(adminApp) {
+    var BaseAdmin = require('../../services/modeladmins/BaseAdmin');
     var app = express();
     var models = bicycle.models;
     Object.keys(models).forEach(function(appName) {

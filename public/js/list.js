@@ -2,6 +2,8 @@ define('list', ['jquery','utils', 'k/kendo.web', 'k/kendo.timezones'],
 function ($, utils) {
 
 var modelName = utils.pageParsedUrl.params['model'];
+var filter = utils.pageParsedUrl.params['filter'];
+filter = filter ? JSON.parse(filter) : null;
 var modelData = null;
 var detailTemplate = kendo.template(
 '<div class="tabstrip">\
@@ -18,6 +20,43 @@ var detailTemplate = kendo.template(
 </div>'
 );
 
+
+var initGridConf = function(gridConf, $grid) {
+    gridConf.dataSource.transport.parameterMap = function(options, operation) {
+        return options;
+    };
+    if(gridConf.dataSource.transport.create) {
+        gridConf.dataSource.transport.create.complete = function(e) {
+            $grid.data("kendoGrid").dataSource.read();
+        }
+    }
+    gridConf.dataSource.error = function(msg) {
+        alert(msg.errors ? msg.errors.join('\n') : msg.errorThrown);
+        console.log('error occured: ', msg);
+    };
+}
+
+var initDetailGridConf = function(gridConf, $grid, _id) {
+    initGridConf(gridConf, $grid);
+    var methods = ['read', 'update', 'create', 'destroy'];
+    var trans = gridConf.dataSource.transport;
+    for (var i = 0; i < methods.length; i++) {
+        if(typeof(trans[methods[i]]) === 'string') {
+            if(/[?&]_id=/.test(trans[methods[i]])) {
+                trans[methods[i]] = trans[methods[i]].replace(/(.*[?&]_id=)([^&]+)(&.*)*$/, '$1' + _id + '$3');
+            } else {
+                trans[methods[i]] = trans[methods[i]] + '?_id=' + _id;
+            }
+        } else if(typeof(trans[methods[i]]) === 'object') {
+            if(/[?&]_id=/.test(trans[methods[i]].url)) {
+                trans[methods[i]].url = trans[methods[i]].url.replace(/(.*[?&]_id=)([^&]+)(&.*)*$/, '$1' + _id + '$3');
+            } else {
+                trans[methods[i]].url = trans[methods[i]].url + '?_id=' + _id;
+            }
+        }
+    }
+}
+
 var detailInit = function(e) {
     console.log('detailInit: ', e);
     var detailRow = e.detailRow;
@@ -33,12 +72,9 @@ var detailInit = function(e) {
         switch(tab.type) {
             case "grid":
                 var gridConf = tab.gridConf;
-                gridConf.dataSource.transport.parameterMap = function(options, operation) {
-                    if (operation !== "read" && options.models) {
-                        return {models: kendo.stringify(options.models)};
-                    }
-                };
-                detailRow.find("." + tab.className).kendoGrid(gridConf);
+                var $grid = detailRow.find("." + tab.className);
+                initDetailGridConf(gridConf, $grid, e.data._id);
+                $grid.kendoGrid(gridConf);
                 break;
             default:
                 console.error('not supported tab.type: ', tab.type);
@@ -74,23 +110,19 @@ var detailInit = function(e) {
 */
 }
 
-
 $.get('../../webapi/admin/' + modelName + '/config/', function(data) {
     modelData = data;
     var gridConf = data.grid.gridConf;
-    gridConf.dataSource.transport.parameterMap = function(options, operation) {
-        if (operation !== "read" && options.models) {
-            return {models: kendo.stringify(options.models)};
-        }
-    };
+    var $grid = $('#grid');
+    initGridConf(gridConf, $grid);
+    if(filter) {
+        gridConf.dataSource.filter = filter;
+    }
     if(data.grid.tabs && data.grid.tabs.length) {
         gridConf.detailTemplate = detailTemplate({tabs: data.grid.tabs});
         gridConf.detailInit = detailInit;
-        gridConf.dataBound = function() {
-            this.expandRow(this.tbody.find("tr.k-master-row").first());
-        }
     }
-    $("#grid").kendoGrid(gridConf);
+    $grid.kendoGrid(gridConf);
 });
 
 return;

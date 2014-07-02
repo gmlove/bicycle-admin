@@ -1,5 +1,7 @@
 'use strict';
 
+var UrlResolver = require('./UrlResolver');
+
 var express = require('express');
 var passport = require('passport');
 
@@ -39,6 +41,14 @@ function route(app) {
       }
       res.redirect('/');
     }
+
+    function attachResolver(req, res, next) {
+        req.urlResolver = new UrlResolver(req);
+        return next();
+    }
+
+    app.all('/*', attachResolver);
+
     require('./http').route(app);
     require('./login').route(app);
     require('./signup').route(app);

@@ -37,7 +37,7 @@ exp.urlparams = function(url){
         var eidx = params[i].indexOf('=');
         if (eidx == -1) p[params[i]] = '';
         else{
-            p[params[i].substr(0, eidx)] = params[i].substr(eidx + 1);
+            p[params[i].substr(0, eidx)] = decodeURIComponent(params[i].substr(eidx + 1));
         }
     }
     return p;

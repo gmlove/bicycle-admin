@@ -20,3 +20,25 @@ proto.getActiveMenu = function() {
         return modelRoute;
     }
 }
+
+proto.buildContent = function(cb) {
+    var self = this;
+    ListPageSupport.super_.prototype.buildContent.call(this, function(err){
+        if(err) {
+            return cb(err);
+        }
+        var menus = self.workflow.outcome.menu;
+        for (var i = 0; i < menus.length; i++) {
+            if(menus[i].children) {
+                for (var j = 0; j < menus[i].children.length; j++) {
+                    var menu = menus[i].children[j];
+                    if(menu.id == self.req.query.model) {
+                        self.workflow.outcome.page.title = menu.name;
+                        return cb(null);
+                    }
+                };
+            }
+        }
+        cb(null);
+    });
+}

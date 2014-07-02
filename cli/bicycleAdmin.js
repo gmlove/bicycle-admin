@@ -65,8 +65,10 @@ function initdb() {
     ], function(err, user) {
         if(err) {
             logger.error('error occured: ', err);
+            process.exit(1);
         } else {
             logger.info('initdb success.');
+            process.exit(0);
         }
     });
 }
@@ -104,9 +106,11 @@ function createsuperuser(username, password, email) {
     ], function(err, user) {
         if(err) {
             logger.error('error occured: ', err);
+            process.exit(1);
             return;
         }
         logger.info('user created.');
+        process.exit(0);
     });
 }
 
