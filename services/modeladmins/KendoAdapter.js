@@ -213,7 +213,7 @@ proto.buildKendoField = function (attr, attrName, schema, hiddenColumns) {
             }
         }
 
-        if(attr.options.enum) {
+        if(attr.options.enum && attr.options.enum.values) {
             Object.keys(attr.options.enum.values).forEach(function(value){
                 column.values.push({text: value, value: value});
             });
@@ -235,6 +235,7 @@ proto.buildKendoField = function (attr, attrName, schema, hiddenColumns) {
         field.type = 'string';
         // TODO: mark field as a link
     } else {
+        debugger;
         throw new Error(util.format('no such type found for schema path: path=%s, type=%s', attrName, typeof(attr)));
     }
     logger.debug('buildKendoField: attr=%s, attrName=%s, schema=%s, hiddenColumns=%s, field=%j, column=%j',

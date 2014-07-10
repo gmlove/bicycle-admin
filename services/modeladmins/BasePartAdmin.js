@@ -1,5 +1,6 @@
 var mongoose = require('bicycle/db').mongoose;
 var KendoAdapter = require('./KendoAdapter');
+var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
 
 
 var ATTR_TYPE_ARRAY = 'array';
@@ -131,16 +132,13 @@ proto.initKendoSchemaAndGridColumns = function() {
         this.kendoAdapter.buildKendoIdFieldForArray(kendoFields, gridColumns);
         this.kendoAdapter.buildKendoFieldsForSchema(attr.schema, kendoFields, gridColumns, this.hiddenColumns,
             function(attr, attrName){
-                var adminPort = this.getPartAdmin(attr, attrName);
-                if(adminPort) {
-                    this.parts.push(adminPort);
-                }
+                logger.warn('will not handle sub subtype: attr.type=%, attrName=%s', typeof(attr), attrName);
             });
         // delete _id field
         delete kendoFields['_id'];
         for (var i = 0; i < gridColumns.length; i++) {
             if(gridColumns[i].field == '_id') {
-                var c = gridColumns.splice(i, 1);
+                gridColumns.splice(i, 1);
                 break;
             }
         }

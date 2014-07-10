@@ -1,4 +1,4 @@
-var app = require('../app');
+var app = require(process.cwd() + '/app');
 var bicycle = require('bicycle').bicycle;
 var models = bicycle.models[require('../config').appName];
 var logger = require('bicycle/logger').getLogger('crawler', __filename);
@@ -89,14 +89,14 @@ function createsuperuser(username, password, email) {
     };
     async.waterfall([
         function(cb) {
-            models.Admin.find({'name.full':'Root Admin', groups:{$in:['root']}}, '_id', cb);
+            models.Admin.findOne({'name.full':'Root Admin', groups:{$in:['root']}}, '_id', cb);
         },
         function(admin, cb) {
             if(!admin) {
                 logger.error('no admin role found, you should do initdb first.');
                 return cb(new error('no adin role found'));
             }
-            user.roles.admin = admin.id;
+            user.roles.admin = admin._id;
             models.User.encryptPassword(user.password, cb);
         },
         function(hash, cb) {

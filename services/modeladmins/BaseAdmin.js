@@ -189,6 +189,13 @@ proto.del = function(workflow) {
 proto.getPartAdmin = function(attr, path) {
     var schemaTypes = mongoose.Schema.Types;
     if(attr instanceof schemaTypes.Array) {
+        var caster = attr.caster;
+        // ignore complicate sub type
+        if(caster instanceof schemaTypes.Array
+            || caster instanceof schemaTypes.Mixed
+            || caster instanceof schemaTypes.Buffer) {
+            return null;
+        }
         var BasePartAdmin = require('./BasePartAdmin');
         return new BasePartAdmin(this, attr, path);
     }
@@ -207,9 +214,9 @@ proto.initKendoSchemaAndGridColumns = function() {
     var self = this;
     this.kendoAdapter.buildKendoFieldsForSchema(model.schema, kendoFields, gridColumns, this.hiddenColumns,
         function(attr, attrName){
-            var adminPort = self.getPartAdmin(attr, attrName);
-            if(adminPort) {
-                self.adminParts.push(adminPort);
+            var adminPart = self.getPartAdmin(attr, attrName);
+            if(adminPart) {
+                self.adminParts.push(adminPart);
             }
         });
 

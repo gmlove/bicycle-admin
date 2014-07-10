@@ -18,6 +18,9 @@ fs.readdirSync(__dirname).forEach(function (filename) {
     }
 });
 
+exports.registerPageSupport = function(_pageSupportCls) {
+    pagesupportCls[_pagesupportCls.prototype.forpage] = _pagesupportCls;
+}
 
 exports.pagesupportRoute = function(adminApp) {
     var app = express();

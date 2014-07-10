@@ -4,6 +4,7 @@ var dateFormat = require('dateformat');
 var modelAdmins = require('../../admins').modelAdmins;
 var apiAdmin = require('../admin');
 var config = require('../../config');
+var bicycle = require('bicycle');
 var models = require('bicycle').models[config.appName];
 var util = require('util');
 
@@ -52,6 +53,59 @@ proto.buildHeader = function(cb) {
         });
 }
 
+proto.buildMenuForApps = function() {
+    var apps = Object.keys(bicycle.models);
+    var self = this;
+    var menus = [];
+    apps.forEach(function(appName){
+        if(appName === config.appName) {
+            return;
+        }
+        var menu = {
+            faClassName: "fa-group",
+            name: self.toViewName(appName),
+            children: [],
+        };
+        var models = bicycle.models[appName];
+        Object.keys(models).forEach(function(modelName){
+            menu.children.push({
+                "id": apiAdmin.getRoutedModelName(appName, modelName),
+                "name": self.toViewName(modelName, true),
+                "link": self.resolveModelUrl(appName, modelName),
+            });
+        });
+        menus.push(menu);
+    });
+    return menus;
+}
+
+proto.toViewName = function(name, addPlural) {
+    var upperFirstLetter = function(str) {
+        return str.charAt(0).toUpperCase() + str.substr(1);
+    }
+    var nameParts = name.split(/[-_]/);
+    var words = [];
+    for (var i = 0; i < nameParts.length; i++) {
+        if(nameParts[i]) {
+            words.push(upperFirstLetter(nameParts[i]));
+        } else {
+
+        }
+    }
+    var finalName = words.join(' ');
+    finalName = finalName.replace(/([a-z][A-Z])/g, function(w){return w[0] + ' ' + w[1]});
+    if(addPlural) {
+        if(/[sx]$/.test(finalName)) {
+            finalName = finalName + 'es';
+        } else if(/ry$/.test(finalName)) {
+            finalName = finalName.replace(/ry$/, 'ries');
+        } else {
+            finalName = finalName + 's';
+        }
+    }
+    return finalName;
+}
+
 proto.buildMenu = function(cb) {
     var menus = [
         {
@@ -92,6 +146,11 @@ proto.buildMenu = function(cb) {
             ]
         }
     ];
+
+    var appMenus = this.buildMenuForApps();
+    appMenus.forEach(function(menu){
+        menus.push(menu);
+    });
 
     var activeMenu = this.getActiveMenu();
     activeMenu = activeMenu ? activeMenu : 'Dashboard';

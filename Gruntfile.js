@@ -83,15 +83,14 @@ module.exports = function(grunt) {
       dev: {
         script: 'app.js',
         options: {
-          nodeArgs: ['--debug=31001'],
+          nodeArgs: ['--debug=31001', '--debug-brk'],
           env: {
             PORT: '31000'
           },
           ignore: [
-            'node_modules/**',
             'public/**'
           ],
-          watch: ['views/**/*.js', 'services/**/*.js', '*.js', 'models/**/*.js'],
+          watch: ['node_modules/**/*.js', 'views/**/*.js', 'services/**/*.js', '*.js', 'models/**/*.js'],
           ext: 'js',
           callback: function (nodemon) {
             nodemon.on('log', function (event) {
