@@ -23,7 +23,7 @@ exp.parseUrl = function(url) {
     parsed.host = matches[2];
     parsed.port = matches[3] ? parseInt(matches[3]) : 80;
     parsed.path = matches[4];
-    console.log(parsed);
+    // console.log(parsed);
     return parsed;
 }
 

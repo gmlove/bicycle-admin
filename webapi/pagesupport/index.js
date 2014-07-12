@@ -7,22 +7,12 @@ var express = require('express');
 var exp = module.exports;
 var pagesupportCls = {};
 
-fs.readdirSync(__dirname).forEach(function (filename) {
-    if (/index\.js$/.test(filename)) {
-        return;
-    }
-    var name = path.basename(filename, '.js');
-    var PageSupport = require('./' + name);
-    if(PageSupport.prototype.forpage) {
-        pagesupportCls[PageSupport.prototype.forpage] = PageSupport;
-    }
-});
-
-exports.registerPageSupport = function(_pageSupportCls) {
+exp.registerPageSupport = function(_pagesupportCls) {
+    logger.debug('registerPageSupport: forpage=%s', _pagesupportCls.prototype.forpage);
     pagesupportCls[_pagesupportCls.prototype.forpage] = _pagesupportCls;
 }
 
-exports.pagesupportRoute = function(adminApp) {
+exp.pagesupportRoute = function(adminApp) {
     var app = express();
     app.use(app.router);
     Object.keys(pagesupportCls).forEach(function(pageName){
@@ -38,6 +28,18 @@ exports.pagesupportRoute = function(adminApp) {
     return app;
 }
 
-exports.route = function(app) {
-    app.use('/pagesupport', exports.pagesupportRoute(app));
+exp.route = function(app) {
+    app.use('/pagesupport', exp.pagesupportRoute(app));
 }
+
+
+fs.readdirSync(__dirname).forEach(function (filename) {
+    if (/index\.js$/.test(filename)) {
+        return;
+    }
+    var name = path.basename(filename, '.js');
+    var PageSupport = require('./' + name);
+    if(PageSupport.prototype.forpage) {
+        exp.registerPageSupport(PageSupport);
+    }
+});

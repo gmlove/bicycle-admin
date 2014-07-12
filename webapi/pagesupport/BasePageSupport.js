@@ -242,7 +242,7 @@ proto.execute = function() {
             logger.error('error occurred: ', err);
             workflow.emit('500', err);
         } else {
-            logger.debug('page support result: %j', workflow.outcome);
+            // logger.debug('page support result: %j', workflow.outcome);
             workflow.emit('response');
         }
     });

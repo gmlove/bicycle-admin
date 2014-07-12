@@ -2,9 +2,6 @@
 {<contentBody}
 {#page}
 {#content}
-<div class="row">
-    <h1>This is dashboard page!</h1>
-</div>
 <!-- Small boxes (Stat box) -->
 <div class="row">
     {#statBoxes}
