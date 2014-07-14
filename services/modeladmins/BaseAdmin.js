@@ -2,7 +2,7 @@ var models = require('bicycle').models[require('../../config').appName];
 var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
 var util = require('util');
 var mongoose = require('bicycle/db').mongoose;
-var dateFormat = require('dateFormat');
+var dateFormat = require('dateformat');
 var async = require('async');
 var KendoAdapter = require('./KendoAdapter');
 
