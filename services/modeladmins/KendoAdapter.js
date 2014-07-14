@@ -1,7 +1,7 @@
 var mongoose = require('bicycle/db').mongoose;
 var util = require('util');
 var logger = require('bicycle/logger').getLogger('bicycle-admin', __filename);
-var dateFormat = require('dateFormat');
+var dateFormat = require('dateformat');
 
 function KendoAdapter() {
 }
