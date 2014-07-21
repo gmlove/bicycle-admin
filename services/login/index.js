@@ -27,6 +27,7 @@ function loginUserKey(req, res, workflowFunc) {
   logger.debug('loginUserKey');
 }
 
+
 exports.login = function(req, res, workflowFunc){
   var workflow = workflowFunc(req, res);
   logger.debug('login: ', util.inspect(req.body));
@@ -621,8 +622,8 @@ exports.forgot = function(req, res, workflowFunc, next){
 
 exports.reset = function(req, res, workflowFunc){
   var workflow = workflowFunc(req, res);
-  logger.debug('reset user password request: body=%s, params=%s',
-    util.inspect(req.body), util.inspect(req.params));
+  logger.debug('reset user password request: body=%j, params=%j',
+    req.body, req.params);
 
   workflow.on('validate', function() {
     logger.debug('validate password');
@@ -696,3 +697,48 @@ exports.reset = function(req, res, workflowFunc){
 
   workflow.emit('validate');
 };
+
+exports.resetWeb = function(req, res, workflowFunc){
+  logger.debug('reset user password request: body=%j, params=%j',
+    req.body, req.params);
+
+  var workflow = workflowFunc(req, res);
+  var user = req.user;
+  req.session.messages = req.session.messages || [];
+  if(!user || !req.body.password || !req.body.newPassword) {
+    req.session.messages.push({level: 'danger', message: 'Invalid parameters.'});
+    return workflow.emit('error', 'invalid params');
+  }
+  models.User.validatePassword(req.body.password, user.password, function(err, valid){
+    if(err || !valid) {
+      req.session.messages.push({level: 'danger', message: 'Invalid password.'});
+      return workflow.emit('error', 'password not right');
+    }
+
+    models.User.encryptPassword(req.body.newPassword, function(err, hash) {
+      if (err) {
+        req.session.messages.push({level: 'danger', message: err.message});
+        return workflow.emit('exception', err);
+      }
+
+      var fieldsToSet = { password: hash, resetPasswordToken: '' };
+      models.User.findByIdAndUpdate(user._id, fieldsToSet, function(err, user) {
+        if (err) {
+          req.session.messages.push({level: 'danger', message: err.message});
+          return workflow.emit('exception', err);
+        }
+
+        req.session.messages.push({level: 'success', message: 'Password has been reset!'});
+        workflow.emit('response');
+      });
+    });
+  });
+};
+
+exports.logout = function(req, res, workflowFunc) {
+  var workflow = workflowFunc(req, res);
+  logger.debug('reset user password request: body=%j, params=%j', req.body, req.params);
+  req.logout();
+  workflow.emit('response');
+};
+

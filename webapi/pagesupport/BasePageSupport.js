@@ -215,6 +215,16 @@ proto.buildContent = function(cb) {
     cb(null);
 }
 
+proto.buildMessages = function(cb) {
+    var msgs = this.req.session.messages;
+    logger.debug('session message: %j', msgs);
+    if(msgs && msgs.length) {
+        this.workflow.outcome.page.messages = msgs;
+        this.req.session.messages = [];
+    }
+    cb(null);
+}
+
 proto.buildExtra = function(cb) {
     cb(null);
 }
@@ -235,6 +245,7 @@ proto.execute = function() {
         this.buildHeader.bind(this),
         this.buildMenu.bind(this),
         this.buildContent.bind(this),
+        this.buildMessages.bind(this),
         this.buildExtra.bind(this),
         this.afterBuild.bind(this),
     ], function(err) {

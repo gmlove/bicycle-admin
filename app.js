@@ -21,6 +21,9 @@ var app = express();
 //setup the web server
 app.server = http.createServer(app);
 
+//setup the session store
+app.sessionStore = new mongoStore({ url: config.db.opts.uri });
+
 //init bicycle
 bicycle.init(app);
 app.bicycle = bicycle;

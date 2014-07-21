@@ -1,4 +1,4 @@
-define('model', ['jquery','utils', 'k/kendo.web', 'k/kendo.timezones'],
+define('model', ['jquery','utils', 'base', 'k/kendo.web', 'k/kendo.timezones'],
 function ($, utils) {
 
 var modelName = utils.pageParsedUrl.params['model'].replace(/_[a-zA-Z]/g, function(word){return word.substring(1,2).toUpperCase();});

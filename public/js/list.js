@@ -1,4 +1,4 @@
-define('list', ['jquery','utils', 'k/kendo.web', 'k/kendo.timezones'],
+define('list', ['jquery','utils', 'base', 'k/kendo.web', 'k/kendo.timezones'],
 function ($, utils) {
 
 var modelName = utils.pageParsedUrl.params['model'];

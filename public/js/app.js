@@ -62,6 +62,7 @@ requirejs.config({
             exports: "$.fn.popover",
         }
     },
+    waitSeconds: 150
 });
 
 requirejs(['dustRender'],

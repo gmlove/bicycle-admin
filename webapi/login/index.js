@@ -12,6 +12,10 @@ var login = function (req, res) {
     loginService.login(req, res, workflowFunc);
 }
 
+var loginWeb = function (req, res) {
+    loginService.loginWeb(req, res, workflowFunc);
+}
+
 var forgot = function (req, res, next) {
     loginService.forgot(req, res, workflowFunc, next);
 }
@@ -23,6 +27,15 @@ var resetData = function (req, res) {
 var reset = function (req, res) {
     loginService.reset(req, res, workflowFunc);
 }
+
+var resetWeb = function (req, res) {
+    loginService.resetWeb(req, res, workflowFunc);
+}
+
+var logout = function(req, res) {
+    loginService.logout(req, res, workflowFunc);
+}
+
 
 var loginQQ = function(req, res) {
     loginService.loginQQ(req, res, workflowFunc);
@@ -36,9 +49,11 @@ var loginWeibo = function(req, res) {
 exports.route = function(app) {
     app.get('/login/login/', loginData);
     app.post('/login/login/', login);
+    app.post('/login/logout/', logout);
     app.post('/login/forgot/', forgot);
     app.get('/login/reset.json', resetData);
     app.post('/login/reset/:email/:token/', reset);
+    app.post('/login/reset/', resetWeb);
     app.get('/login/login/qq/', loginQQ);
     app.get('/login/login/weibo/', loginWeibo);
 }
