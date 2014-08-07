@@ -1,6 +1,12 @@
-@import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,300italic,400italic,600italic);
+/*@import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,300italic,400italic,600italic);
 
 @import url(//fonts.googleapis.com/css?family=Kaushan+Script);
+*/
+
+@import url(googlefonts/css-family__Source_Sans_Pro_300_400_600_300italic_400italic_600italic.css);
+
+@import url(googlefonts/css-family__Kaushan_Script.css);
+
 /*! 
  *   AdminLTE v1.2
  *   Author: AlmsaeedStudio.com

@@ -27,6 +27,24 @@ exp.parseUrl = function(url) {
     return parsed;
 }
 
+exp.relativeUrl = function(urlto, path, params) {
+    if(urlto.indexOf('?') != -1) {
+        urlto = urlto.replace(/\?.*$/, '');
+    }
+    if(urlto.indexOf('/') == -1) {
+        urlto = urlto + '/';
+    }
+    var url = urlto.replace(/\/[^\/]*$/, '/') + path;
+    if(params) {
+        var urlparams = [];
+        for(var i in params) {
+            urlparams.push(i + '=' + encodeURIComponent(params[i]));
+        }
+        url += '?' + urlparams.join('&');
+    }
+    return url;
+}
+
 exp.urlparams = function(url){
     var p = {};
     var idx = url.indexOf('?');

@@ -25,7 +25,6 @@ build/Release
 node_modules
 bower_components
 
-public/vendor/
 *.min.js
 *.js.map
 *.dust.js

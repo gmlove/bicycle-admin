@@ -1,0 +1,6 @@
+#model-form > .box-body > div > .k-edit-form-container {
+    width: 100%;
+}
+#model-form > .box-body > div > .k-edit-form-container > div > input {
+    width: 60%;
+}

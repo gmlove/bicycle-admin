@@ -249,9 +249,13 @@ proto.buildColumnTemplateForRefField = function(kendoSchema, gridColumns, workfl
     var urlResolver = workflow.req.urlResolver;
     for (var i = 0; i < gridColumns.length - 1; i++) {
         var col = gridColumns[i];
-        if(fields[col.field].ref) {
+        if(fields[col.field].ref || col.field == '_id') {
             col.template = '#if('+col.field+'){#<a target="_blank" href="%s">#= ' + col.field + ' #</a>#}#';
-            col.template = util.format(col.template, urlResolver.resolveRefUrl(fields[col.field].ref, '________'));
+            if(col.field == '_id') {
+                col.template = util.format(col.template, urlResolver.resolveRefUrl(kendoSchema.appName, kendoSchema.modelName, '________'));
+            } else {
+                col.template = util.format(col.template, urlResolver.resolveRefUrl(fields[col.field].ref, '________'));
+            }
             col.template = col.template.replace('________', '#= ' + col.field + ' #');
         }
     }

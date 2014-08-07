@@ -1,9 +1,9 @@
 {>"base.dust"/}
 {<contentBody}
-<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.common-bootstrap.min.css" rel="stylesheet" />
-<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.bootstrap.min.css" rel="stylesheet" />
-<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.dataviz.min.css" rel="stylesheet" />
-<link href="http://cdn.kendostatic.com/2014.1.528/styles/kendo.dataviz.bootstrap.min.css" rel="stylesheet" />
+<link href="../vendor/kendo-ui/styles/kendo.common-bootstrap.min.css" rel="stylesheet" />
+<link href="../vendor/kendo-ui/styles/kendo.bootstrap.min.css" rel="stylesheet" />
+<link href="../vendor/kendo-ui/styles/kendo.dataviz.min.css" rel="stylesheet" />
+<link href="../vendor/kendo-ui/styles/kendo.dataviz.bootstrap.min.css" rel="stylesheet" />
 <div class="col-md-6">
     <div class="box box-primary">
         <div class="box-header">

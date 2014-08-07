@@ -66,7 +66,7 @@ requirejs.config({
         jquery: '../bower_components/jquery/jquery',
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         adminLTE: 'AdminLTE/app',
-        k: "../bower_components/kendo-ui/src/js",
+        k: "../vendor/kendo-ui/src/js",
     },
     shim: {
         jquery: {

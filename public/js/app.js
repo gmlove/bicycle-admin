@@ -17,6 +17,7 @@ define('dustRender', ['jquery', 'utils', 'adminLTE'], function($, utils){
         $.get(data_path, utils.pageParsedUrl.params, function(data) {
             dust.isDebug = true;
             dust.debugLevel = 'INFO';
+            window.viewData = data;
             dust.render(template_path, data, function(err, out) {
                 if (err) {
                     console.log('render template failed: err=' + err.message + ', template=' + template_path + ', data=');
@@ -51,7 +52,7 @@ requirejs.config({
         jquery: '../bower_components/jquery/jquery',
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         adminLTE: 'AdminLTE/app',
-        k: "../bower_components/kendo-ui/src/js",
+        k: "../vendor/kendo-ui/src/js",
     },
     shim: {
         jquery: {

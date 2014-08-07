@@ -110,6 +110,8 @@ proto.list = function(workflow) {
             return workflow.emit('exception', err);
         }
         workflow.outcome.results = models.map(self._toKendoModel.bind(self));
+        logger.debug('list model[appName=%s, modelName=%s] data: filter=%j, sort=%j, skip=%j, limit=%j, resultCount=%s',
+            self.appName, self.modelName, filter, sort, skip, self.pageSize, workflow.outcome.results.length);
         self.model.count(filter, function(err, count) {
             if(err) {
                 logger.error('error occured: ', err);
@@ -132,6 +134,11 @@ proto._updateModel = function(kendoModel, create, cb) {
         self.kendoAdapter.updateModel(self.kendoSchema, self.model.schema, kendoModel,
             instance, null, create);
         instance.save(function(err, savedInstance){
+            if(err) {
+                logger.warn('save instance error: ', err);
+            } else {
+                logger.debug('save instance success: instance=%j', savedInstance);
+            }
             cb(err, savedInstance);
         });
     };
@@ -160,7 +167,7 @@ proto.update = function(workflow, create) {
         if(err) {
             return workflow.emit('exception', err);
         }
-        workflow.outcome = results;
+        workflow.outcome = {results: results};
         return workflow.emit('response');
     });
 }
@@ -206,6 +213,8 @@ proto.initKendoSchemaAndGridColumns = function() {
     var model = this.model;
     var kendoSchema = this.kendoSchema = {
         id: '_id',
+        appName: this.appName,
+        modelName: this.modelName,
         fields: {},
     };
     var gridColumns = this.gridColumns = [];
