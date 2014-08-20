@@ -13,3 +13,9 @@ var proto = exp.prototype;
 
 proto.forpage = "model.html";
 
+proto.getActiveMenu = function() {
+    var modelRoute = this.req.query.model;
+    if(modelRoute) {
+        return modelRoute;
+    }
+}

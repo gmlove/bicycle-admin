@@ -152,29 +152,6 @@ proto.buildMenu = function(cb) {
         menus.push(menu);
     });
 
-    var activeMenu = this.getActiveMenu();
-    activeMenu = activeMenu ? activeMenu : 'Dashboard';
-    logger.debug('use activeMenu: ', activeMenu);
-    fori:
-    for (var i = 0; i < menus.length; i++) {
-        var menu = menus[i];
-        if(activeMenu == menu.id) {
-            menu.active = true;
-            break;
-        }
-        var children = menu.children;
-        if(children) {
-            for (var j = 0; j < children.length; j++) {
-                var submenu = children[j];
-                if(activeMenu == submenu.id) {
-                    submenu.active = true;
-                    menu.active = true;
-                    break fori;
-                }
-            }
-        }
-    }
-
     this.workflow.outcome.menu = menus;
     cb(null);
 }
@@ -230,6 +207,29 @@ proto.buildExtra = function(cb) {
 }
 
 proto.afterBuild = function(cb) {
+    var menus = this.workflow.outcome.menu;
+    var activeMenu = this.getActiveMenu();
+    activeMenu = activeMenu ? activeMenu : 'Dashboard';
+    logger.debug('use activeMenu: ', activeMenu);
+    fori:
+    for (var i = 0; i < menus.length; i++) {
+        var menu = menus[i];
+        if(activeMenu == menu.id) {
+            menu.active = true;
+            break;
+        }
+        var children = menu.children;
+        if(children) {
+            for (var j = 0; j < children.length; j++) {
+                var submenu = children[j];
+                if(activeMenu == submenu.id) {
+                    submenu.active = true;
+                    menu.active = true;
+                    break fori;
+                }
+            }
+        }
+    }
     cb(null);
 }
 

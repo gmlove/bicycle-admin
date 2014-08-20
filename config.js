@@ -1,7 +1,7 @@
 'use strict';
 
 var path = require('path');
-exports.port = 3000;
+exports.port = 4000;
 exports.projectName = 'Bicycle Admin Site';
 exports.cryptoKey = 'k3yb0ardc4t';
 exports.loginAttempts = {

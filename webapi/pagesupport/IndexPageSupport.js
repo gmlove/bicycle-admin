@@ -31,39 +31,44 @@ proto.getModelsToStat = function() {
 }
 
 proto.buildExtra = function(cb) {
-    var page = this.workflow.outcome.page;
-    var modelsToStat = this.getModelsToStat();
-    if(!modelsToStat) {
-        return cb(null);
-    }
-
-    page.content = page.content || {};
-    var statBoxes = page.content.statBoxes = [];
     var self = this;
-
-    var tasks = modelsToStat.map(function(m, i){
-        return function(cb) {
-            var dbmodel = appModels[m.appName][m.modelName];
-            dbmodel.count(m.condition || {}, function(err, count){
-                if(err) {
-                    return cb(err);
-                }
-                statBoxes[i] = {
-                    title: count,
-                    description: m.description,
-                    link: self.resolveModelUrl(m.appName, m.modelName),
-                    colorClassName: m.colorClassName,
-                    ionClassName: m.ionClassName,
-                }
-                cb(null);
-            });
-        }
-    });
-
-    async.parallel(tasks, function(err){
+    IndexPageSupport.super_.prototype.buildExtra.call(this, function(err){
         if(err) {
             return cb(err);
         }
-        cb(null);
+        var page = self.workflow.outcome.page;
+        var modelsToStat = self.getModelsToStat();
+        if(!modelsToStat) {
+            return cb(null);
+        }
+
+        page.content = page.content || {};
+        var statBoxes = page.content.statBoxes = [];
+
+        var tasks = modelsToStat.map(function(m, i){
+            return function(cb) {
+                var dbmodel = appModels[m.appName][m.modelName];
+                dbmodel.count(m.condition || {}, function(err, count){
+                    if(err) {
+                        return cb(err);
+                    }
+                    statBoxes[i] = {
+                        title: count,
+                        description: m.description,
+                        link: self.resolveModelUrl(m.appName, m.modelName),
+                        colorClassName: m.colorClassName,
+                        ionClassName: m.ionClassName,
+                    }
+                    cb(null);
+                });
+            }
+        });
+
+        async.parallel(tasks, function(err){
+            if(err) {
+                return cb(err);
+            }
+            cb(null);
+        });
     });
 }
