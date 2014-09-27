@@ -236,12 +236,12 @@ proto.afterBuild = function(cb) {
 proto.execute = function() {
     var workflow = this.workflow;
     async.waterfall([
-        function(cb) { // for test
-            models.User.find({username:'root'}).limit(1).exec(function(err, users){
-                workflow.req.user = users[0];
-                cb(null);
-            });
-        },
+        // function(cb) { // for test
+        //     models.User.find({username:'root'}).limit(1).exec(function(err, users){
+        //         workflow.req.user = users[0];
+        //         cb(null);
+        //     });
+        // },
         this.buildHeader.bind(this),
         this.buildMenu.bind(this),
         this.buildContent.bind(this),
