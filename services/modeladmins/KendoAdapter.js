@@ -238,8 +238,8 @@ proto.buildKendoField = function (attr, attrName, schema, hiddenColumns) {
         debugger;
         throw new Error(util.format('no such type found for schema path: path=%s, type=%s', attrName, typeof(attr)));
     }
-    logger.debug('buildKendoField: attr=%s, attrName=%s, schema=%s, hiddenColumns=%s, field=%j, column=%j',
-        attr, attrName, schema, hiddenColumns, field, column);
+    logger.debug('buildKendoField: attr=%j, attrName=%s, hiddenColumns=%s, field=%j, column=%j',
+        attr, attrName, hiddenColumns, field, column);
     return [field, column];
 };
 

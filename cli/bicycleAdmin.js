@@ -1,11 +1,11 @@
-var app = require(process.cwd() + '/app');
-var bicycle = require('bicycle').bicycle;
-var models = bicycle.models[require('../config').appName];
-var logger = require('bicycle/logger').getLogger('crawler', __filename);
+var logger = console;
 var async = require('async');
 var program = require('commander');
 var version = require('../config').version;
 var util = require('util');
+var mkdirp = require('mkdirp');
+var path = require('path');
+var fs = require('fs');
 
 var COMMAND_ERROR = 'Illegal command format. Use `bicycleAdmin --help` to get more info.\n'.red;
 
@@ -26,6 +26,14 @@ program.command('createsuperuser')
         createsuperuser(opts.username, opts.password, opts.email);
     });
 
+program.command('createapp')
+    .description('create an application with bicycle admin supported.')
+    .option('-p, --path <directory_path>', 'path to your project root directory')
+    .option('-n, --name <project_name>', 'name of your project.')
+    .action(function(opts){
+        createapp(opts.directory_path, opts.project_name);
+    });
+
 program.command('*')
     .action(function() {
         console.log(COMMAND_ERROR);
@@ -34,7 +42,12 @@ program.command('*')
 program.parse(process.argv);
 
 
+
 function initdb() {
+    var app = require(process.cwd() + '/app');
+    var bicycle = require('bicycle').bicycle;
+    var models = bicycle.models[require('../config').appName];
+
     var admingroup = {
         _id: 'root',
         name: 'Root',
@@ -75,6 +88,10 @@ function initdb() {
 
 
 function createsuperuser(username, password, email) {
+    var app = require(process.cwd() + '/app');
+    var bicycle = require('bicycle').bicycle;
+    var models = bicycle.models[require('../config').appName];
+
     var user = {
         username: username,
         password: password,
@@ -114,6 +131,73 @@ function createsuperuser(username, password, email) {
     });
 }
 
+function createapp(projPath, projName) {
+    if(!projPath) {
+        projPath = './';
+    }
+    if(!projName) {
+        projName = 'bicycle-demo';
+    }
+    var templPath = path.join(__dirname, 'templates/proj-templ');
+    var templProjName = 'proj-templ';
+    var projPath = path.join(projPath, projName);
+    copy(templPath, projPath, [[templProjName, projName]]);
+}
 
+function filterContent (content, replaces) {
+    for (var i = 0; i < replaces.length; i++) {
+        content = content.replace(new RegExp(replaces[i][0], "g"), replaces[i][1]);
+    }
+    return content;
+}
 
+/**
+ * Copy template files to project.
+ *
+ * @param {String} origin
+ * @param {String} target
+ * @param {String} replaces
+ */
+function copy(origin, target, replaces) {
+  if(!fs.existsSync(origin)) {
+    abort(origin + 'does not exist.');
+  }
+  if(!fs.existsSync(target)) {
+    mkdir(target);
+    console.log('   create : ' + target);
+  }
+  fs.readdir(origin, function(err, datalist) {
+    if(err) {
+      abort(FILEREAD_ERROR);
+    }
+    for(var i = 0; i < datalist.length; i++) {
+      var oCurrent = path.resolve(origin, datalist[i]);
+      var tCurrent = path.resolve(target, datalist[i]);
+      if(fs.statSync(oCurrent).isFile()) {
+        fs.writeFileSync(tCurrent, filterContent(fs.readFileSync(oCurrent, '') + '', replaces), '');
+        console.log('   create : ' + tCurrent);
+      } else if(fs.statSync(oCurrent).isDirectory()) {
+        copy(oCurrent, tCurrent, replaces);
+      }
+    }
+  });
+}
+
+/**
+ * Mkdir -p.
+ *
+ * @param {String} path
+ * @param {Function} fn
+ */
+function mkdir(path, fn) {
+  mkdirp(path, 0755, function(err){
+    if(err) {
+      throw err;
+    }
+    console.log('   create : ' + path);
+    if(typeof fn === 'function') {
+      fn();
+    }
+  });
+}
 
