@@ -80,7 +80,7 @@ app.configure(function(){
     });
 
     app.get('/', function(req, res){
-      res.redirect('/public/pages/index.html');
+      res.redirect('/public/pages/login.html');
     });
 });
 

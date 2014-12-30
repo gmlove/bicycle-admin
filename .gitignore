@@ -33,5 +33,6 @@ bower_components
 public1/
 .rebooted
 public/pages/**/*.html
+!public/pages/template.html
 public/pages/**/*.js
 

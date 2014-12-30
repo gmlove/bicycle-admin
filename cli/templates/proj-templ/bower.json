@@ -1,0 +1,13 @@
+{
+  "name": "Express Admin Mongo",
+  "dependencies": {
+    "kendo-ui": "2014.1.416",
+    "bootstrap": "*",
+    "jquery": "2.0.3",
+    "dustjs-linkedin": "^2.3.4",
+    "async": "~0.6.2",
+    "jquery-ui": "~1.10.4",
+    "requirejs": "~2.1.14",
+    "dustjs-linkedin-helpers": "~1.2.0"
+  }
+}
