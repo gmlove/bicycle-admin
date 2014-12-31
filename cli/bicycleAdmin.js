@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var logger = console;
 var async = require('async');
 var program = require('commander');

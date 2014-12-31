@@ -5,6 +5,9 @@
   "scripts": {
     "start": "node app.js"
   },
+  "bin": {
+    "bicycleAdmin": "./cli/bicycleAdmin.js"
+  }
   "dependencies": {
     "async": "~0.2.9",
     "bcrypt": "^0.7.7",
