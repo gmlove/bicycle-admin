@@ -27,7 +27,7 @@
     "passport-qq": "0.0.3",
     "passport-sina": "0.0.3",
     "passport-twitter": "~1.0.2",
-    "bicycle": "git+https://github.com/gmlove/bicycle.git"
+    "bicycle": "git://github.com/gmlove/bicycle.git"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
