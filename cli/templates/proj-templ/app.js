@@ -33,7 +33,7 @@ app.bicycle = bicycle;
 //init bicycle admin
 bicycleAdmin.init(app);
 
-var logger = require('bicycle/logger').getLogger('careco', __filename);
+var logger = require('bicycle/logger').getLogger(config.appName, __filename);
 
 //config express in all environments
 app.configure(function(){
