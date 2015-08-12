@@ -7,6 +7,7 @@ var config = require('../../config');
 var bicycle = require('bicycle');
 var models = require('bicycle').models[config.appName];
 var util = require('util');
+var profiler = require('bicycle/utils/profiler');
 
 var BasePageSupport = function (workflow) {
     this.workflow = workflow;
@@ -29,6 +30,7 @@ proto.resolveModelUrl = function(appName, modelName) {
 
 
 proto.buildHeader = function(cb) {
+    profiler.tag('buildHeader');
     var req = this.workflow.req;
     var user = this.workflow.outcome.user = {
         name: req.user.username,
@@ -54,6 +56,7 @@ proto.buildHeader = function(cb) {
 }
 
 proto.buildMenuForApps = function() {
+    profiler.tag('buildMenuForApps');
     var apps = Object.keys(bicycle.models);
     var self = this;
     var menus = [];
@@ -107,6 +110,7 @@ proto.toViewName = function(name, addPlural) {
 }
 
 proto.buildMenu = function(cb) {
+    profiler.tag('buildMenu');
     var menus = [
         {
             "faClassName": "fa-dashboard",
@@ -161,6 +165,7 @@ proto.getActiveMenu = function() {
 }
 
 proto.buildContent = function(cb) {
+    profiler.tag('buildContent');
     var page = {
         title: 'Dashboard',
         description: '',
@@ -193,6 +198,7 @@ proto.buildContent = function(cb) {
 }
 
 proto.buildMessages = function(cb) {
+    profiler.tag('buildMessages');
     var msgs = this.req.session.messages;
     logger.debug('session message: %j', msgs);
     if(msgs && msgs.length) {
@@ -203,10 +209,12 @@ proto.buildMessages = function(cb) {
 }
 
 proto.buildExtra = function(cb) {
+    profiler.tag('buildExtra');
     cb(null);
 }
 
 proto.afterBuild = function(cb) {
+    profiler.tag('buildExtra');
     var menus = this.workflow.outcome.menu;
     var activeMenu = this.getActiveMenu();
     activeMenu = activeMenu ? activeMenu : 'Dashboard';
@@ -234,6 +242,7 @@ proto.afterBuild = function(cb) {
 }
 
 proto.execute = function() {
+    profiler.tag('execute start');
     var workflow = this.workflow;
     async.waterfall([
         // function(cb) { // for test
@@ -249,6 +258,7 @@ proto.execute = function() {
         this.buildExtra.bind(this),
         this.afterBuild.bind(this),
     ], function(err) {
+        profiler.tag('execute end');
         if(err) {
             logger.error('error occurred: ', err);
             workflow.emit('500', err);
