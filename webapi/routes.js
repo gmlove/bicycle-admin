@@ -5,11 +5,11 @@ var UrlResolver = require('./UrlResolver');
 var express = require('express');
 var passport = require('passport');
 
+var router = express.Router();
+
 exports = module.exports = function(adminApp) {
-    var app = express();
-    app.use(app.router);
-    route(app, passport);
-    return app;
+    route(router, passport);
+    return router;
 };
 
 

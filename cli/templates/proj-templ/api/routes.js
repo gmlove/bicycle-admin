@@ -4,11 +4,11 @@ var express = require('express');
 var consts = require('../consts.js');
 var workflowFunc = require('bicycle/core/workflow')();
 
+var router = express.Router();
+
 exports = module.exports = function(passport) {
-    var app = express();
-    app.use(app.router);
-    route(app, passport);
-    return app;
+    route(router, passport);
+    return router;
 };
 
 

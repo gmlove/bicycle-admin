@@ -2,11 +2,11 @@
 
 var express = require('express');
 
+var router = express.Router();
+
 exports = module.exports = function(passport) {
-    var app = express();
-    app.use(app.router);
-    route(app, passport);
-    return app;
+    route(router, passport);
+    return router;
 };
 
 

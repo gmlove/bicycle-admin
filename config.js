@@ -39,7 +39,7 @@ exports.oauth = {
 exports.db = {
     type: require('bicycle/db').backends.mongodb,
     opts: {
-        uri: 'localhost/bicycle-admin',
+        uri: 'mongodb://localhost/bicycle-admin',
         error: console.error.bind(console, 'mongodb connection error: ')
     }
 };

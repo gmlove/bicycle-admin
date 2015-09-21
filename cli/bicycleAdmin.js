@@ -28,12 +28,21 @@ program.command('createsuperuser')
         createsuperuser(opts.username, opts.password, opts.email);
     });
 
+program.command('resetpass')
+    .description('reset user password.')
+    .option('-u, --username <username>', 'user name')
+    .option('-p, --password <password>', 'password')
+    .action(function(opts){
+        resetpass(opts.username, opts.password);
+    });
+
+
 program.command('createapp')
     .description('create an application with bicycle admin supported.')
     .option('-p, --path <directory_path>', 'path to your project root directory')
     .option('-n, --name <project_name>', 'name of your project.')
     .action(function(opts){
-        createapp(opts.directory_path, opts.project_name);
+        createapp(opts.path, opts.name);
     });
 
 program.command('*')
@@ -113,7 +122,7 @@ function createsuperuser(username, password, email) {
         function(admin, cb) {
             if(!admin) {
                 logger.error('no admin role found, you should do initdb first.');
-                return cb(new error('no adin role found'));
+                return cb(new error('no admin role found'));
             }
             user.roles.admin = admin._id;
             models.User.encryptPassword(user.password, cb);
@@ -129,6 +138,39 @@ function createsuperuser(username, password, email) {
             return;
         }
         logger.info('user created.');
+        process.exit(0);
+    });
+}
+
+function resetpass(username, password) {
+    var app = require(process.cwd() + '/app');
+    var bicycle = require('bicycle').bicycle;
+    var models = bicycle.models[require('../config').appName];
+    var user = null;
+
+    async.waterfall([
+        function(cb) {
+            models.User.findOne({'username': username}, cb);
+        },
+        function(_user, cb) {
+            if(!_user) {
+                logger.error('no user `named` %s exists.', username);
+                return cb(new error('no user found'));
+            }
+            user = _user;
+            models.User.encryptPassword(password, cb);
+        },
+        function(hash, cb) {
+            user.password = hash;
+            user.save(cb);
+        }
+    ], function(err) {
+        if(err) {
+            logger.error('error occured: ', err);
+            process.exit(1);
+            return;
+        }
+        logger.info('user password updated.');
         process.exit(0);
     });
 }

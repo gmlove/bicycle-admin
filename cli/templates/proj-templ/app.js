@@ -3,9 +3,19 @@
 //dependencies
 var config = require('./config'),
     express = require('express'),
-    mongoStore = require('connect-mongo')(express),
+    morgan = require('morgan'),
+    compression = require('compression'),
+    favicon = require('serve-favicon'),
+    methodOverride = require('method-override'),
+    bodyParser = require('body-parser'),
+    serveStatic = require('serve-static'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
+    errorhandler = require('errorHandler'),
+    mongoStore = require('connect-mongo')(session),
     http = require('http'),
     path = require('path'),
+    passport = require('passport'),
     helmet = require('helmet'),
     bicycle = require('bicycle'),
     db = require('bicycle/db'),
@@ -13,13 +23,14 @@ var config = require('./config'),
     api = require('./api'),
     bicycleAdmin = require('bicycle-admin');
 
+var env = process.env.NODE_ENV || 'development';
+
 //config bicycle apps
 bicycle.use(require('bicycle-admin/config.js'));
 bicycle.use(require('./config.js'));
 
 //create express app
 var app = express();
-module.exports = app;
 
 //setup the web server
 app.server = http.createServer(app);
@@ -35,60 +46,54 @@ bicycleAdmin.init(app);
 
 var logger = require('bicycle/logger').getLogger(config.appName, __filename);
 
-//config express in all environments
-app.configure(function(){
-    //settings
-    app.disable('x-powered-by');
-    app.set('port', config.port);
-    app.set('strict routing', true);
+//settings
+app.disable('x-powered-by');
+app.set('port', config.port);
+app.set('strict routing', true);
 
-    //middleware
-    app.use(express.logger('dev'));
-    app.use(express.compress());
-    app.use(express.favicon(__dirname + '/public/favicon.ico'));
-    app.use('/public', express.static(path.join(__dirname, "public")));
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(function(req, res, next) {
-        //add support for get query cookie
-        if(req.query['connect.sid']){
-            req.headers['cookie'] = 'connect.sid=' + encodeURIComponent(req.query['connect.sid']);
-            delete req.query['connect.sid'];
-        }
-        next();
-    });
-    app.use(express.cookieParser());
-    app.use(express.session({
-      secret: config.cryptoKey,
-      store: app.sessionStore
-    }));
-    bicycleAdmin.setupMiddleware(app);
-    helmet.defaults(app);
+//middleware
+if ('development' == env) {
+    app.use(morgan('dev'));
+}
+app.use(compression());
+app.use(favicon(__dirname + '/public/favicon.png'));
+app.use('/public1', serveStatic(path.join(__dirname, "public1")));
+app.use('/public', serveStatic(path.join(__dirname, "public")));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(methodOverride());
+app.use(cookieParser());
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: config.cryptoKey,
+    store: app.sessionStore
+}));
+bicycleAdmin.setupMiddleware(app);
+app.use(helmet());
 
-    //route requests
-    webapi.init(app);
-    bicycleAdmin.setupRoutes(app);
-    app.use('/api/', api.routes());
+//route requests
+webapi.init(app);
+bicycleAdmin.setupRoutes(app);
+app.use('/api/', api.routes());
 
-    //error handler
-    app.use(function(err, req, res, next) {
-        if (req.path.indexOf('/webapi/') == 0) {
-            return webapi.http500Handler(err, req, res, next);
-        } else if (req.path.indexOf('/api/') == 0) {
-            return api.http500Handler(err, req, res, next);
-        }
-    });
-
-    app.get('/', function(req, res){
-      res.redirect('/public/pages/login.html');
-    });
+app.get('/', function(req, res){
+  res.redirect('/public/pages/login.html');
 });
 
-//config express in dev environment
-app.configure('development', function(){
-    app.use(express.errorHandler());
+//error handler
+app.use(function(err, req, res, next) {
+    if (req.path.indexOf('/webapi/') == 0) {
+        return webapi.http500Handler(err, req, res, next);
+    } else if (req.path.indexOf('/api/') == 0) {
+        return api.http500Handler(err, req, res, next);
+    }
 });
 
+app.use(errorhandler());
+
+//setup passport
+require('bicycle-admin/services/passport')(app, passport);
 
 //listen up
 app.server.listen(config['port'], function(){
@@ -100,3 +105,6 @@ app.server.listen(config['port'], function(){
 process.on('uncaughtException', function(err) {
   logger.error('Caught exception: ', err);
 });
+
+
+module.exports = app;
