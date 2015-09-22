@@ -185,7 +185,7 @@ function createapp(projPath, projName) {
     var templPath = path.join(__dirname, 'templates/proj-templ');
     var templProjName = 'proj-templ';
     var projPath = path.join(projPath, projName);
-    copy(templPath, projPath, [[templProjName, projName]]);
+    copy(templPath, projPath, [[templProjName, projName]], [templPath + '/node_modules', templPath + '/public/bower_components']);
 }
 
 function filterContent (content, replaces) {
@@ -202,7 +202,7 @@ function filterContent (content, replaces) {
  * @param {String} target
  * @param {String} replaces
  */
-function copy(origin, target, replaces) {
+function copy(origin, target, replaces, ignored) {
   if(!fs.existsSync(origin)) {
     abort(origin + 'does not exist.');
   }
@@ -214,14 +214,23 @@ function copy(origin, target, replaces) {
     if(err) {
       abort(FILEREAD_ERROR);
     }
+    fori:
     for(var i = 0; i < datalist.length; i++) {
       var oCurrent = path.resolve(origin, datalist[i]);
+      if(ignored) {
+        for (var ingoredIdx = 0; ingoredIdx < ignored.length; ingoredIdx++) {
+          if(ignored[ingoredIdx] === oCurrent) {
+            console.log('   ignore: ' + oCurrent);
+            continue fori;
+          }
+        }
+      }
       var tCurrent = path.resolve(target, datalist[i]);
       if(fs.statSync(oCurrent).isFile()) {
         fs.writeFileSync(tCurrent, filterContent(fs.readFileSync(oCurrent, '') + '', replaces), '');
         console.log('   create : ' + tCurrent);
       } else if(fs.statSync(oCurrent).isDirectory()) {
-        copy(oCurrent, tCurrent, replaces);
+        copy(oCurrent, tCurrent, replaces, ignored);
       }
     }
   });

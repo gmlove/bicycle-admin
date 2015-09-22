@@ -203,6 +203,18 @@ proto.buildKendoField = function (attr, attrName, schema, hiddenColumns) {
         column.hidden = true;
     }
 
+    if(attr.options.enumDesc) {
+        column.values = [];
+        attr.options.enumDesc.forEach(function(item){
+            column.values.push({text: item.text, value: item.value});
+        });
+    } else if(attr.options.enum) {
+        column.values = [];
+        Object.keys(attr.options.enum).forEach(function(value){
+            column.values.push({text: value, value: value});
+        });
+    }
+
     if(attr instanceof schemaTypes.String) {
         field.type = 'string';
         if(attr.options.match) {
@@ -211,12 +223,6 @@ proto.buildKendoField = function (attr, attrName, schema, hiddenColumns) {
             } else {
                 field.validation.pattern = attr.options.match + '';
             }
-        }
-
-        if(attr.options.enum && attr.options.enum.values) {
-            Object.keys(attr.options.enum.values).forEach(function(value){
-                column.values.push({text: value, value: value});
-            });
         }
     } else if(attr instanceof schemaTypes.Number) {
         field.type = 'number';
