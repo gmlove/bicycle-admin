@@ -9,7 +9,6 @@
     "bicycleAdmin": "./cli/bicycleAdmin.js"
   },
   "dependencies": {
-    "bicycle": "git://github.com/gmlove/bicycle.git",
     "async": "1.4.2",
     "bcrypt": "0.8.5",
     "commander": "^2.2.0",
